@@ -81,7 +81,7 @@ public class Attendance {
             System.out.println("Error reading attendance file.");
             e.printStackTrace();
         }
-    }
+    }\
 
 
     public static int getSubjectIndex(String subject) {
