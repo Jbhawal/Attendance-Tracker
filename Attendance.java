@@ -207,25 +207,12 @@ public class Attendance {
         }
     }
 
-    public static void calculate() {
-        String[] subjects = {"CO", "DAA", "DM", "OS", "NM"};
-        System.out.println("\n--- Attendance Summary ---");
-        for (int i = 0; i < 5; i++) {
-            if (totalAttendance[i] > 0) {
-                int percentage = (myAttendance[i] * 100) / totalAttendance[i];
-                System.out.println(subjects[i] + ": " + myAttendance[i] + "/" + totalAttendance[i] + " = " + percentage + "%");
-            } else {
-                System.out.println(subjects[i] + ": No classes yet.");
-            }
-        }
-    }
-
     public static void main(String[] args) {
         loadAttendanceFromFile();
         boolean running = true;
 
         while (running) {
-            System.out.println("mon, tues, wed, thurs, fri, extra, show, exit :");
+            System.out.println("mon, tues, wed, thurs, fri, extra, save, exit :");
             String choice = sc.nextLine();
 
             switch (choice.toLowerCase()) {
@@ -246,9 +233,6 @@ public class Attendance {
                     break;
                 case "extra":
                     extra();
-                    break;
-                case "show":
-                    calculate();
                     break;
                 case "save":
                     saveAttendanceToFile();
