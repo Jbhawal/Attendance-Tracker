@@ -1,12 +1,88 @@
 import java.util.*;
+import java.io.*;
+import java.time.LocalDate;
+import java.time.DayOfWeek;
 
 public class Attendance {
     static Scanner sc = new Scanner(System.in);
 
-    // Constants for subjects
+    // Setting constants for subjects
     static final int CO = 0, DAA = 1, DM = 2, OS = 3, NM = 4;
     static int[] myAttendance = new int[5];
     static int[] totalAttendance = new int[5];
+
+    public static void saveAttendanceToFile() {
+        //for history records. so all the entries.
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("records.txt",true))) {
+            String[] subjects = {"CO", "DAA", "DM", "OS", "NM"};
+            LocalDate currentDate = LocalDate.now();
+            DayOfWeek currentDay = currentDate.getDayOfWeek();
+
+            // writer.write("Date- " + currentDate + " (" + currentDay + ")");  //YY-MM-DD
+            // writer.newLine();
+
+            System.out.print("Enter date in format yyyy-mm-dd (DAY): ");
+            String dateInput = sc.nextLine();
+            writer.write("Date: " + dateInput);
+            writer.newLine();
+
+            for (int i = 0; i < 5; i++) {
+                writer.write(subjects[i] + ": " + myAttendance[i] + "/" + totalAttendance[i] + "\n");
+            }
+            writer.write("\n"); // Add a blank line after each entry
+            writer.close();
+        } 
+        catch (IOException e) {
+            System.out.println("An error occurred while saving attendance data.");
+            e.printStackTrace();
+        }
+        
+        //for latest attendance.
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter("attendance.txt"));
+            String[] subjects = {"CO", "DAA", "DM", "OS", "NM"};
+            for (int i = 0; i < 5; i++) {
+                int percentage = (myAttendance[i] * 100) / totalAttendance[i];
+                writer.write(subjects[i] + ": " + myAttendance[i] + "/" + totalAttendance[i] + ": " + percentage + "%"+ "\n");
+            }
+            writer.write("\n");
+            writer.close();
+        } 
+        catch (IOException e) {
+            System.out.println("An error occurred while saving attendance data.");
+            e.printStackTrace();
+        }
+        System.out.println("Attendance data saved successfully.");
+    }
+
+    public static void loadAttendanceFromFile() {
+        File file = new File("attendance.txt");
+        if (!file.exists()) {
+            System.out.println("No previous attendance data found.");
+            return;
+        }
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            String[] subjects = {"CO", "DAA", "DM", "OS", "NM"};
+            int i = 0;
+            while ((line = reader.readLine()) != null && i < 5) {
+                if (line.contains(":")) {
+                    String[] parts = line.split(":")[1].trim().split("/");
+                    myAttendance[i] += Integer.parseInt(parts[0]);
+                    totalAttendance[i]+= Integer.parseInt(parts[1]);
+                    i++;
+                }
+                else{
+                    continue;
+                }
+            }
+            System.out.println("Previous attendance loaded successfully.\n");
+        } catch (IOException e) {
+            System.out.println("Error reading attendance file.");
+            e.printStackTrace();
+        }
+    }
+
 
     public static int getSubjectIndex(String subject) {
         switch (subject) {
@@ -19,7 +95,6 @@ public class Attendance {
         }
     }
     
-
     public static void monday() {
         System.out.println("CO-1, Attend?(y/n): ");
         totalAttendance[CO]++;
@@ -146,6 +221,7 @@ public class Attendance {
     }
 
     public static void main(String[] args) {
+        loadAttendanceFromFile();
         boolean running = true;
 
         while (running) {
@@ -173,6 +249,9 @@ public class Attendance {
                     break;
                 case "show":
                     calculate();
+                    break;
+                case "save":
+                    saveAttendanceToFile();
                     break;
                 case "exit":
                     System.out.println("Exiting...");
