@@ -11,6 +11,8 @@ public class Attendance {
     static final int CO = 0, DAA = 1, DM = 2, OS = 3, NM = 4;
     static int[] myAttendance = new int[5];
     static int[] totalAttendance = new int[5];
+    static int[] todayTotal = new int[5];
+    static int[] todayAttendance = new int[5];
 
     public static void saveAttendanceToFile() {
         //for history records. so all the entries.
@@ -19,7 +21,7 @@ public class Attendance {
             LocalDate currentDate = LocalDate.now();
             DayOfWeek currentDay = currentDate.getDayOfWeek();
 
-            writer.write("Date- " + currentDate + " (" + currentDay + ")");  //YY-MM-DD
+            writer.write("Date- " + currentDate + " (" + currentDay + ")");  //YYYY-MM-DD
             writer.newLine();
 
             // System.out.print("Enter date in format yyyy-mm-dd (DAY): ");
@@ -28,7 +30,7 @@ public class Attendance {
             // writer.newLine();
 
             for (int i = 0; i < 5; i++) {
-                writer.write(subjects[i] + ": " + myAttendance[i] + "/" + totalAttendance[i] + "\n");
+                writer.write(subjects[i] + ": " + todayAttendance[i] + "/" + todayTotal[i] + "\n");
             }
             writer.write("\n");
             writer.close();
@@ -90,11 +92,18 @@ public class Attendance {
     }
 
     public static void markAttendance(int subjectIndex, int count) {
+        todayTotal[subjectIndex] += count;
+        todayAttendance[subjectIndex] += count;
         totalAttendance[subjectIndex] += count;
         if (didAttend(subjects[subjectIndex] + " - " + count)) {
             myAttendance[subjectIndex] += count;
         }
     }
+
+    static void resetTodayAttendance() {
+    Arrays.fill(todayAttendance, 0);
+    Arrays.fill(todayTotal, 0);
+}
 
     public static int getSubjectIndex(String subject) {
         switch (subject) {
@@ -164,26 +173,32 @@ public class Attendance {
 
             switch (choice.toLowerCase()) {
                 case "mon":
+                    resetTodayAttendance();
                     monday();
                     saveAttendanceToFile();
                     break;
                 case "tues":
+                    resetTodayAttendance();
                     tuesday();
                     saveAttendanceToFile();
                     break;
                 case "wed":
+                    resetTodayAttendance();
                     wednesday();
                     saveAttendanceToFile();
                     break;
                 case "thurs":
+                    resetTodayAttendance();
                     thursday();
                     saveAttendanceToFile();
                     break;
                 case "fri":
+                    resetTodayAttendance();
                     friday();
                     saveAttendanceToFile();
                     break;
                 case "extra":
+                    resetTodayAttendance();
                     extra();
                     saveAttendanceToFile();
                     break;
