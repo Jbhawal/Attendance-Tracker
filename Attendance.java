@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.DayOfWeek;
 
 public class Attendance {
+    static final String[] subjects = {"CO", "DAA", "DM", "OS", "NM"};
     static Scanner sc = new Scanner(System.in);
 
     // Setting constants for subjects
@@ -14,22 +15,22 @@ public class Attendance {
     public static void saveAttendanceToFile() {
         //for history records. so all the entries.
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("records.txt",true))) {
-            String[] subjects = {"CO", "DAA", "DM", "OS", "NM"};
+            
             LocalDate currentDate = LocalDate.now();
             DayOfWeek currentDay = currentDate.getDayOfWeek();
 
-            // writer.write("Date- " + currentDate + " (" + currentDay + ")");  //YY-MM-DD
-            // writer.newLine();
-
-            System.out.print("Enter date in format yyyy-mm-dd (DAY): ");
-            String dateInput = sc.nextLine();
-            writer.write("Date: " + dateInput);
+            writer.write("Date- " + currentDate + " (" + currentDay + ")");  //YY-MM-DD
             writer.newLine();
+
+            // System.out.print("Enter date in format yyyy-mm-dd (DAY): ");
+            // String dateInput = sc.nextLine();
+            // writer.write("Date: " + dateInput);
+            // writer.newLine();
 
             for (int i = 0; i < 5; i++) {
                 writer.write(subjects[i] + ": " + myAttendance[i] + "/" + totalAttendance[i] + "\n");
             }
-            writer.write("\n"); // Add a blank line after each entry
+            writer.write("\n");
             writer.close();
         } 
         catch (IOException e) {
@@ -40,9 +41,9 @@ public class Attendance {
         //for latest attendance.
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter("attendance.txt"));
-            String[] subjects = {"CO", "DAA", "DM", "OS", "NM"};
+            
             for (int i = 0; i < 5; i++) {
-                int percentage = (myAttendance[i] * 100) / totalAttendance[i];
+                int percentage = totalAttendance[i] == 0 ? 0 : (myAttendance[i] * 100) / totalAttendance[i];
                 writer.write(subjects[i] + ": " + myAttendance[i] + "/" + totalAttendance[i] + ": " + percentage + "%"+ "\n");
             }
             writer.write("\n");
@@ -63,7 +64,7 @@ public class Attendance {
         }
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
-            String[] subjects = {"CO", "DAA", "DM", "OS", "NM"};
+            
             int i = 0;
             while ((line = reader.readLine()) != null && i < 5) {
                 if (line.contains(":")) {
@@ -83,6 +84,17 @@ public class Attendance {
         }
     }
 
+    public static boolean didAttend(String message) {
+        System.out.println(message + " Attend? (y/n): ");
+        return sc.nextLine().equalsIgnoreCase("y");
+    }
+
+    public static void markAttendance(int subjectIndex, int count) {
+        totalAttendance[subjectIndex] += count;
+        if (didAttend(subjects[subjectIndex] + " - " + count)) {
+            myAttendance[subjectIndex] += count;
+        }
+    }
 
     public static int getSubjectIndex(String subject) {
         switch (subject) {
@@ -96,90 +108,30 @@ public class Attendance {
     }
     
     public static void monday() {
-        System.out.println("CO-1, Attend?(y/n): ");
-        totalAttendance[CO]++;
-        String COattend = sc.nextLine();
-        if (COattend.equalsIgnoreCase("y")) {
-            myAttendance[CO]++;
-        }
+        markAttendance(CO, 1);
     }
 
     public static void tuesday() {
-        System.out.println("OS-1, Attend?(y/n): ");
-        totalAttendance[OS]++;
-        String OSattend = sc.nextLine();
-        if (OSattend.equalsIgnoreCase("y")) {
-            myAttendance[OS]++;
-        }
-        System.out.println("DM-2, Attend?(y/n): ");
-        totalAttendance[DM] += 2;
-        String DMattend = sc.nextLine();
-        if (DMattend.equalsIgnoreCase("y")) {
-            myAttendance[DM] += 2;
-        }
+        markAttendance(OS,1);
+        markAttendance(DM,2);
     }
 
     public static void wednesday() {
-        System.out.println("OS-2, Attend?(y/n): ");
-        totalAttendance[OS] += 2;
-        String OSattend = sc.nextLine();
-        if (OSattend.equalsIgnoreCase("y")) {
-            myAttendance[OS] += 2;
-        }
-        System.out.println("DAA-2, Attend?(y/n): ");
-        totalAttendance[DAA] += 2;
-        String DAAattend = sc.nextLine();
-        if (DAAattend.equalsIgnoreCase("y")) {
-            myAttendance[DAA] += 2;
-        }
-        System.out.println("CO-1, Attend?(y/n): ");
-        totalAttendance[CO]++;
-        String COattend = sc.nextLine();
-        if (COattend.equalsIgnoreCase("y")) {
-            myAttendance[CO]++;
-        }
+        markAttendance(OS,2);
+        markAttendance(DAA,2);
+        markAttendance(CO,1);
     }
 
     public static void thursday() {
-        System.out.println("CO-2, Attend?(y/n): ");
-        totalAttendance[CO] += 2;
-        String COattend = sc.nextLine();
-        if (COattend.equalsIgnoreCase("y")) {
-            myAttendance[CO] += 2;
-        }
-        System.out.println("NM-2, Attend?(y/n): ");
-        totalAttendance[NM] += 2;
-        String NMattend = sc.nextLine();
-        if (NMattend.equalsIgnoreCase("y")) {
-            myAttendance[NM] += 2;
-        }
-        System.out.println("DM-2, Attend?(y/n): ");
-        totalAttendance[DM] += 2;
-        String DMattend = sc.nextLine();
-        if (DMattend.equalsIgnoreCase("y")) {
-            myAttendance[DM] += 2;
-        }
+        markAttendance(CO,2);
+        markAttendance(NM,2);
+        markAttendance(DM,2);
     }
 
     public static void friday() {
-        System.out.println("OS-1, Attend?(y/n): ");
-        totalAttendance[OS]++;
-        String OSattend = sc.nextLine();
-        if (OSattend.equalsIgnoreCase("y")) {
-            myAttendance[OS]++;
-        }
-        System.out.println("DAA-2, Attend?(y/n): ");
-        totalAttendance[DAA] += 2;
-        String DAAattend = sc.nextLine();
-        if (DAAattend.equalsIgnoreCase("y")) {
-            myAttendance[DAA] += 2;
-        }
-        System.out.println("NM-1, Attend?(y/n): ");
-        totalAttendance[NM]++;
-        String NMattend = sc.nextLine();
-        if (NMattend.equalsIgnoreCase("y")) {
-            myAttendance[NM]++;
-        }
+        markAttendance(OS,1);
+        markAttendance(DAA,2);
+        markAttendance(NM,1);
     }
 
     public static void extra() {
@@ -198,12 +150,7 @@ public class Attendance {
             System.out.println("How many? ");
             int totalCount = sc.nextInt();
             sc.nextLine(); // Consume the newline character
-            totalAttendance[subIndex] += totalCount;
-            System.out.println("Attend?(y/n): ");
-            String attend = sc.nextLine();
-            if (attend.equalsIgnoreCase("y")) {
-                myAttendance[subIndex] += totalCount;
-            }
+            markAttendance(subIndex, totalCount);
         }
     }
 
@@ -212,33 +159,36 @@ public class Attendance {
         boolean running = true;
 
         while (running) {
-            System.out.println("mon, tues, wed, thurs, fri, extra, save, exit :");
+            System.out.println("mon, tues, wed, thurs, fri, extra, exit :");
             String choice = sc.nextLine();
 
             switch (choice.toLowerCase()) {
                 case "mon":
                     monday();
+                    saveAttendanceToFile();
                     break;
                 case "tues":
                     tuesday();
+                    saveAttendanceToFile();
                     break;
                 case "wed":
                     wednesday();
+                    saveAttendanceToFile();
                     break;
                 case "thurs":
                     thursday();
+                    saveAttendanceToFile();
                     break;
                 case "fri":
                     friday();
+                    saveAttendanceToFile();
                     break;
                 case "extra":
                     extra();
-                    break;
-                case "save":
                     saveAttendanceToFile();
                     break;
                 case "exit":
-                    System.out.println("Exiting...");
+                    System.out.println("Bye bye!");
                     running = false;
                     break;
                 default:
