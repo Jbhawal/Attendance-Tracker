@@ -87,16 +87,25 @@ public class Attendance {
     }
 
     public static boolean didAttend(String message) {
-        System.out.println(message + " Attend? (y/n): ");
-        return sc.nextLine().equalsIgnoreCase("y");
+        while (true) {
+            System.out.print(message + " Attend? (y/n): ");
+            String input = sc.nextLine().trim().toLowerCase();
+            if (input.equals("y")) {
+                return true;
+            } else if (input.equals("n")) {
+                return false;
+            } else {
+                System.out.println("Invalid input. Please enter 'y' for yes or 'n' for no.");
+            }
+        }
     }
 
     public static void markAttendance(int subjectIndex, int count) {
         todayTotal[subjectIndex] += count;
-        todayAttendance[subjectIndex] += count;
         totalAttendance[subjectIndex] += count;
         if (didAttend(subjects[subjectIndex] + " - " + count)) {
             myAttendance[subjectIndex] += count;
+            todayAttendance[subjectIndex] += count;
         }
     }
 
@@ -147,7 +156,7 @@ public class Attendance {
         Boolean extra = true;
         while(extra){
             System.out.println("Which subject? (CO, DAA, DM, OS, NM) or exit: ");
-            String subject = sc.nextLine().toUpperCase();
+            String subject = sc.nextLine().trim().toUpperCase();
             if (subject.equals("EXIT")) {
                 break;
             }
@@ -169,9 +178,9 @@ public class Attendance {
 
         while (running) {
             System.out.println("mon, tues, wed, thurs, fri, extra, exit :");
-            String choice = sc.nextLine();
+            String choice = sc.nextLine().trim().toLowerCase();
 
-            switch (choice.toLowerCase()) {
+            switch (choice) {
                 case "mon":
                     resetTodayAttendance();
                     monday();
