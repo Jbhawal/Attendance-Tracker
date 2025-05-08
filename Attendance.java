@@ -7,12 +7,15 @@ public class Attendance {
     static final String[] subjects = {"CO", "DAA", "DM", "OS", "NM"};
     static Scanner sc = new Scanner(System.in);
 
+    static int n=subjects.length;
+    
+
     // Setting constants for subjects
     static final int CO = 0, DAA = 1, DM = 2, OS = 3, NM = 4;
-    static int[] myAttendance = new int[5];
-    static int[] totalAttendance = new int[5];
-    static int[] todayTotal = new int[5];
-    static int[] todayAttendance = new int[5];
+    static int[] myAttendance = new int[n];
+    static int[] totalAttendance = new int[n];
+    static int[] todayTotal = new int[n];
+    static int[] todayAttendance = new int[n];
 
     public static void saveAttendanceToFile() {
         //for history records. so all the entries.
@@ -29,7 +32,7 @@ public class Attendance {
             // writer.write("Date: " + dateInput);
             // writer.newLine();
 
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < n; i++) {
                 writer.write(subjects[i] + ": " + todayAttendance[i] + "/" + todayTotal[i] + "\n");
             }
             writer.write("\n");
@@ -44,7 +47,7 @@ public class Attendance {
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter("attendance.txt"));
             
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < n; i++) {
                 int percentage = totalAttendance[i] == 0 ? 0 : (myAttendance[i] * 100) / totalAttendance[i];
                 writer.write(subjects[i] + ": " + myAttendance[i] + "/" + totalAttendance[i] + ": " + percentage + "%"+ "\n");
             }
@@ -68,7 +71,7 @@ public class Attendance {
             String line;
             
             int i = 0;
-            while ((line = reader.readLine()) != null && i < 5) {
+            while ((line = reader.readLine()) != null && i < n) {
                 if (line.contains(":")) {
                     String[] parts = line.split(":")[1].trim().split("/");
                     myAttendance[i] += Integer.parseInt(parts[0]);
@@ -79,7 +82,7 @@ public class Attendance {
                     continue;
                 }
             }
-            System.out.println("Previous attendance loaded successfully.\n");
+            System.out.println("Previous attendance loaded successfully.");
         } catch (IOException e) {
             System.out.println("Error reading attendance file.");
             e.printStackTrace();
@@ -172,12 +175,26 @@ public class Attendance {
         }
     }
 
+    public static void calculateClassesNeeded() {
+        for (int i = 0; i < n; i++) {
+            int attended = myAttendance[i];
+            int total = totalAttendance[i];
+            double x = (0.75 * total - attended) / 0.25;
+            int classesNeeded = (int) Math.ceil(x);
+            if(classesNeeded>0){
+                System.out.println("WARNING!! ");
+                System.out.println(subjects[i] + ": Need " + classesNeeded + " more classes to reach 75%.");
+            }
+        }
+    }
+    
     public static void main(String[] args) {
         loadAttendanceFromFile();
+        calculateClassesNeeded();
         boolean running = true;
 
         while (running) {
-            System.out.println("mon, tues, wed, thurs, fri, extra, exit :");
+            System.out.println("\nmon, tues, wed, thurs, fri, extra, exit :");
             String choice = sc.nextLine().trim().toLowerCase();
 
             switch (choice) {
