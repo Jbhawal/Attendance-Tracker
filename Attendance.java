@@ -5,13 +5,10 @@ import java.time.DayOfWeek;
 
 public class Attendance {
     static final String[] subjects = {"CO", "DAA", "DM", "OS", "NM"};
-    static Scanner sc = new Scanner(System.in);
-
     static int n=subjects.length;
+    static Scanner sc = new Scanner(System.in);
+    static final int CO = 0, DAA = 1, DM = 2, OS = 3, NM = 4;  // Setting constants for subjects
     
-
-    // Setting constants for subjects
-    static final int CO = 0, DAA = 1, DM = 2, OS = 3, NM = 4;
     static int[] myAttendance = new int[n];
     static int[] totalAttendance = new int[n];
     static int[] todayTotal = new int[n];
